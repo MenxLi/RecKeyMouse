@@ -1,5 +1,5 @@
 # KeyMouseRecorder
-A screen recorder (based on [pynput](https://pypi.org/project/pynput/)), record keybord and mouse events.
+A screen recorder (based on [pynput](https://pypi.org/project/pynput/)), record keyboard and mouse events.
 
 ## Installation
 ```bash
