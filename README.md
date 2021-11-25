@@ -9,6 +9,8 @@ python setup.py install
 ## Usage
 ```bash
 recordKM            # Open GUI
+recordKM -r         # Record (no GUI)
+recordKM -p         # Replay (no GUI)
 recordKM --help     # For help
 ```
 
