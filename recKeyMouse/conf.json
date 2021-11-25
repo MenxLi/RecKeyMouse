@@ -1,0 +1,4 @@
+{
+    "log_path": "./record.pkl",
+    "record_after": 3
+}

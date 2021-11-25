@@ -1,0 +1,12 @@
+*.vscode
+*.swp
+*__pycache__
+*.ipynb_checkpoints
+*.egg-info*
+*.spec
+dist
+build
+*.pkl
+
+*_tmp.*
+*.TempDir
