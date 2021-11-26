@@ -25,7 +25,6 @@ class MouseExecuter(DeviceExecuter):
         self.mouse.press(button)
 
     def release(self, x, y, button):
-        print(self)
         self.setPos(x, y)
         self.mouse.release(button)
     

@@ -24,6 +24,7 @@ setup(
 
     packages=find_packages(),
     # package_data={'': ["conf.json"]},
+    exclude_package_data={'': ["conf.json"]},
     include_package_data = True,
 
     install_requires = ["pynput", "PyQt5"],
