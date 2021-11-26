@@ -3,7 +3,8 @@ import sys, argparse, time
 from .recorder import RecorderWindow
 from .logger import ActionLogger
 from .executer import Executer
-from .confReader import writeConf, getConf
+from .confReader import writeConf, getConf, generateDefaultConf, CONF_PATH
+from .utils import openFile
 
 def startGUI(saving_path: str = None):
     app = QApplication(sys.argv)
@@ -26,8 +27,24 @@ def main():
         "-f", "--file_path", default=getConf("log_path"), 
         help = "Set recording file path."
     )
+    parser.add_argument(
+        "--configure", action="store_true", default=False, 
+        help = "Open configuration json file."
+    )
+    parser.add_argument(
+        "--init_configure", action="store_true", default=False, 
+        help = "Generate default configuration file."
+    )
 
     args = parser.parse_args()
+
+    if args.init_configure:
+        generateDefaultConf()
+        return
+    
+    if args.configure:
+        openFile(CONF_PATH)
+        return
 
     if args.record:
         logger = ActionLogger(args.file_path)
@@ -38,10 +55,9 @@ def main():
                 break
     elif args.play:
         executer = Executer(args.file_path)
-        executer.run()
+        executer.run(getConf("replay_times"))
     else: 
         startGUI(args.file_path)
-
 
 if __name__=="__main__":
     main()

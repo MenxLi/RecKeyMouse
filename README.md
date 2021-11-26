@@ -20,12 +20,14 @@ usage: . [-h] [-r] [-p] [-f FILE_PATH]
 
 Screen recorder, run without argument to start GUI. | Author: Mengxun Li (mengxunli@whu.edu.cn)  
 
-optional arguments:  
--h, --help            show this help message and exit  
--r, --record          Start recording directly without GUI.  
--p, --play            Start playing directly without GUI.  
--f FILE_PATH, --file_path FILE_PATH  
-                       Set recording file path.
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --record          Start recording directly without GUI.
+  -p, --play            Start playing directly without GUI.
+  -f FILE_PATH, --file_path FILE_PATH
+                        Set recording file path.
+  --configure           Open configuration json file.
+  --init_configure      Generate default configuration file.
 ```
 
 ## API

@@ -32,7 +32,7 @@ class RecorderWindow(QMainWindow):
         self.lbl_logpath = QLabel()
         self.btn_start = QPushButton("Start")
         self.btn_stop = QPushButton("Stop")
-        self.btn_run = QPushButton("Run")
+        self.btn_run = QPushButton("Run (x{})".format(getConf("replay_times")))
         self.console = QTextEdit()
         self.console.setReadOnly(True)
         self.console.setStyleSheet("color: white; background-color:black")
@@ -86,7 +86,7 @@ class RecorderWindow(QMainWindow):
                 return
         def _executeRecord():
             executer = Executer(self.logger.record_file)
-            executer.run()
+            executer.run(getConf("replay_times"))
         self.__thread_executeRecord = threading.Thread(target=_executeRecord)
         self.__thread_executeRecord.start()
     

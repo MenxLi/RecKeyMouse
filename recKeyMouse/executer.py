@@ -1,4 +1,6 @@
 import time, threading
+
+from recKeyMouse.confReader import getConf
 from .logger import ActionLogger
 import pickle
 import pynput
@@ -49,15 +51,18 @@ class Executer():
         self.m_executer = MouseExecuter()
         self.k_executer = KeyboardExecuter()
     
-    def run(self): 
-        m_thread = threading.Thread(target=self._runEventsThread, args = [self.m_executer, self.logger.mouse_events])
-        m_thread.start()
-
-        k_thread = threading.Thread(target=self._runEventsThread, args = [self.k_executer, self.logger.keyboard_events])
-        k_thread.start()
-
-        m_thread.join()
-        k_thread.join()
+    def run(self, replay_times = 1): 
+        for i in range(replay_times):
+            print("=================================")
+            print("replaying... time {}/{}:".format(i+1, replay_times))
+            m_thread = threading.Thread(target=self._runEventsThread, args = [self.m_executer, self.logger.mouse_events])
+            k_thread = threading.Thread(target=self._runEventsThread, args = [self.k_executer, self.logger.keyboard_events])
+            m_thread.start()
+            k_thread.start()
+            m_thread.join()
+            k_thread.join()
+            if replay_times > 1:
+                time.sleep(getConf("rest_between_replay"))
         print("Finished replay.")
     
     def _runEventsThread(self, executer: DeviceExecuter, events: dict):

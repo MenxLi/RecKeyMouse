@@ -1,4 +1,6 @@
 import os, json
+curr_path = os.path.dirname(__file__)
+CONF_PATH = os.path.join(curr_path, "conf.json")
 
 def getConf(keyword):
     curr_path = os.path.dirname(__file__)
@@ -24,7 +26,9 @@ def generateDefaultConf():
     conf = {
         "log_path": os.path.abspath(default_log_path),
         "record_after":3,
-        "record_mouse_motion": False
+        "record_mouse_motion": False,
+        "replay_times": 1, 
+        "rest_between_replay": 1
     }
     with open(conf_path, "w") as fp:
-        json.dump(conf, fp)
+        json.dump(conf, fp, indent=2)
