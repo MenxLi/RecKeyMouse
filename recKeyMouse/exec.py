@@ -5,9 +5,9 @@ from .logger import ActionLogger
 from .executer import Executer
 from .confReader import writeConf, getConf
 
-def startGUI():
+def startGUI(saving_path: str = None):
     app = QApplication(sys.argv)
-    gui = RecorderWindow()
+    gui = RecorderWindow(saving_path = saving_path)
     sys.exit(app.exec_())
 
 def main():
@@ -40,7 +40,7 @@ def main():
         executer = Executer(args.file_path)
         executer.run()
     else: 
-        startGUI()
+        startGUI(args.file_path)
 
 
 if __name__=="__main__":

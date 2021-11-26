@@ -32,6 +32,7 @@ setup(
     entry_points = {
         "console_scripts":[
             "recordKM=recKeyMouse.exec:main",
+            "recKM=recKeyMouse.exec:main",
         ]
     }
 )

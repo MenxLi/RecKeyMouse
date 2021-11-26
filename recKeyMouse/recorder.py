@@ -3,16 +3,18 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QMainWindow, QPush
 
 from recKeyMouse.executer import Executer
 from .logger import ActionLogger
+from .confReader import getConf
 import json, os
 
 
 class RecorderWindow(QMainWindow):
-    def __init__(self, parent = None) -> None:
+    def __init__(self, parent = None, saving_path:str = None) -> None:
         super().__init__(parent=parent)
-        curr_dir = os.path.dirname(__file__)
-        with open(os.path.join(curr_dir, "conf.json"),'r') as fp:
-            log_path = json.load(fp)["log_path"]
-            log_path = os.path.abspath(log_path)
+        if saving_path is None:
+            log_path = getConf("log_path")
+        else:
+            log_path = saving_path
+        log_path = os.path.abspath(log_path)
         self.logger = ActionLogger(log_path)
         self.initUI()
     
