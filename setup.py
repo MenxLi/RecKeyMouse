@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="KeyMouseRecorder",
-    version="0.1.0",
+    version="0.1.1",
     author="Mengxun Li",
     author_email="mengxunli@whu.edu.cn",
     description="A screen action recorder",
