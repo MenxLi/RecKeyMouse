@@ -25,6 +25,26 @@ optional arguments:
 -r, --record          Start recording directly without GUI.  
 -p, --play            Start playing directly without GUI.  
 -f FILE_PATH, --file_path FILE_PATH  
-                       Set log file path.
+                       Set recording file path.
 ```
+
+## API
+```python
+from recKeyMouse import ActionLogger, Executer, startGUI
+
+recording_file = "<recording file path>" 
+
+# Recording
+logger = ActionLogger(recording_file)
+logger.start()    # Press logger.STOP_KEY to stop recording
+
+# Execute
+executer = Executer(recording_file)
+executer.run()
+
+# Start GUI
+startGUI()
+```
+
+## Settings
 The configuration file is at `<package_path>/recKeyMouse/conf.json`

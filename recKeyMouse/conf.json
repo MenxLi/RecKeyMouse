@@ -1,4 +1,1 @@
-{
-    "log_path": "./record.pkl",
-    "record_after": 3
-}
+{"log_path": "/home/monsoon/Documents/Code/recordKeyMouse/recKeyMouse/record.pkl", "record_after": 3, "record_mouse_motion": false}

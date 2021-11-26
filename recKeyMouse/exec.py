@@ -24,7 +24,7 @@ def main():
     )
     parser.add_argument(
         "-f", "--file_path", default=getConf("log_path"), 
-        help = "Set log file path."
+        help = "Set recording file path."
     )
 
     args = parser.parse_args()

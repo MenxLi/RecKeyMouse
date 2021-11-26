@@ -41,7 +41,9 @@ class ActionLogger():
     MOUSE_MOVE_TIME_INTERVAL = 0.05
     MOUSE_MOVE_DISTANCE_SQUARED = 2500
     STOP_KEY = pynput.keyboard.Key.esc
-    def __init__(self, log_file: str, log_mouse_motion = False) -> None:
+    def __init__(self, log_file: str, log_mouse_motion = getConf("record_mouse_motion")) -> None:
+        if os.path.isdir(log_file):
+            log_file = os.path.join(log_file, "record.pkl")
         self.record_file = os.path.abspath(log_file)
         self.mouse_events = []
         self.keyboard_events = []
