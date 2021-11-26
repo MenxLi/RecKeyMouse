@@ -8,12 +8,29 @@ from pynput.mouse import Controller as M_Controller
 from pynput.mouse import Button as M_Button
 from .confReader import getConf
 
+class Logline(dict, object):
+    def __init__(self, log_dict: dict):
+        super().__init__(log_dict)
+    
+    def __repr__(self) -> str:
+        time_str = str(round(self["time"],2))
+        device_str = self["device"]
+        method_str = self["method"]
+        args_str = ", ".join([str(arg) for arg in self["args"]])
+        kwargs_str = ""
+        for k, v in self["kwargs"].items():
+            kwargs_str += f"{k} = {v}"
+        out = f"{time_str}: {device_str}-{method_str}({args_str}, {kwargs_str})"
+        return out
+    
+    __str__ = __repr__
+
 class ParseLog():
     """
     Parse a single line of the log
     """
     @staticmethod
-    def generateLogLine(time: float, device: str, method: str, args: list = [], kwargs: dict = {}) -> str:
+    def generateLogLine(time: float, device: str, method: str, args: list = [], kwargs: dict = {}) -> Logline:
         # params_str_list = []
         # for k, v in params.items():
             # params_str_list.append("{}|{}".format(k, v))
@@ -31,7 +48,7 @@ class ParseLog():
             "args": args,
             "kwargs": kwargs
         }
-        return log_dict
+        return Logline(log_dict)
 
     @staticmethod
     def readLogLine(log: str) -> dict:
