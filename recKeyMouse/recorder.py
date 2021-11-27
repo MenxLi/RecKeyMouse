@@ -43,8 +43,7 @@ class RecorderWindow(QMainWindow):
     def initUI(self):
         vbox = QVBoxLayout()
         self.setWindowTitle("recKeyMouse")
-        # self.setMaximumWidth(300)
-        self.resize(300, 500)
+        self.setMaximumWidth(300)
         self.lbl_logpath = QLabel()
         self.btn_start_stop = QPushButton("Start")
         self.btn_start_stop.setIcon(QIcon(os.path.join(ICON_PATH, "round_play_arrow_black_48dp.png")))
