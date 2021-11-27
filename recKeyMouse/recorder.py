@@ -25,6 +25,9 @@ class RecorderWindow(QMainWindow):
         self.__thread_startRecording = None
         self.__thread_stopRecording = None
         self.__thread_executeRecord = None
+ 
+        print("Author: Li, Mengxun - mengxunli@whu.edu.cn")
+        print("For more info, see: https://github.com/MenxLi/RecKeyMouse")
 
         def watchRecordingStatus():
             prev_recording = False
