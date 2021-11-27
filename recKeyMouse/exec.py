@@ -4,11 +4,18 @@ from .recorder import RecorderWindow
 from .logger import ActionLogger
 from .executer import Executer
 from .confReader import writeConf, getConf, generateDefaultConf, CONF_PATH
+from .eventEditor import EventEditor
 from .utils import openFile
 
 def startGUI(saving_path: str = None):
     app = QApplication(sys.argv)
     gui = RecorderWindow(saving_path = saving_path)
+    sys.exit(app.exec_())
+
+def startEditorGUI(saving_path: str = None):
+    app = QApplication(sys.argv)
+    editor = EventEditor()
+    editor.loadEventFile(saving_path)
     sys.exit(app.exec_())
 
 def main():
@@ -26,6 +33,10 @@ def main():
     parser.add_argument(
         "-f", "--file_path", default=getConf("log_path"), 
         help = "Set recording file path."
+    )
+    parser.add_argument(
+        "-e", "--edit", action="store_true", default=False, 
+        help = "Edit events. (Underdevelopment, viewing is supported)"
     )
     parser.add_argument(
         "--configure", action="store_true", default=False, 
@@ -56,6 +67,8 @@ def main():
     elif args.play:
         executer = Executer(args.file_path)
         executer.run(getConf("replay_times"))
+    elif args.edit:
+        startEditorGUI(args.file_path)
     else: 
         startGUI(args.file_path)
 
