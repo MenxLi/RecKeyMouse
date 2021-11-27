@@ -9,8 +9,18 @@ from pynput.mouse import Button as M_Button
 from .confReader import getConf
 
 class Logline(dict, object):
+    INDEX_FUNC = [ 
+        ["Time", lambda x: x["time"]],
+        ["Device", lambda x: x["device"]],
+        ["Method", lambda x: x["method"]],
+        ["args", lambda x: ", ".join([str(i) for i in x["args"]])],
+        ["kwargs", lambda x: ", ".join(["{}: {}".format(k, v) for k, v in x["kwargs"].items()])]
+     ]
     def __init__(self, log_dict: dict):
         super().__init__(log_dict)
+    
+    def getStrItemByIndex(self, idx: int):
+        return self.INDEX_FUNC[idx][1](self)
     
     def __repr__(self) -> str:
         time_str = str(round(self["time"],2))

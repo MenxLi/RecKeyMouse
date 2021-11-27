@@ -26,6 +26,7 @@ optional arguments:
   -p, --play            Start playing directly without GUI.
   -f FILE_PATH, --file_path FILE_PATH
                         Set recording file path.
+  -e, --edit            Edit events.
   --configure           Open configuration json file.
   --init_configure      Generate default configuration file.
 ```
