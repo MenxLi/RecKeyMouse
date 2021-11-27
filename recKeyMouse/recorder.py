@@ -1,11 +1,12 @@
-import threading
+import threading, multiprocessing
+from time import time, sleep
 from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtGui import QCursor, QFont
+from PyQt5.QtGui import QCursor, QFont, QIcon
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QMainWindow, QPushButton, QWidget
 
 from recKeyMouse.executer import Executer
 from .logger import ActionLogger
-from .confReader import getConf
+from .confReader import getConf, ICON_PATH
 import json, os, sys
 
 
@@ -24,14 +25,28 @@ class RecorderWindow(QMainWindow):
         self.__thread_startRecording = None
         self.__thread_stopRecording = None
         self.__thread_executeRecord = None
+
+        def watchRecordingStatus():
+            prev_recording = False
+            while True:
+                if self.logger.cache["recording"] and not prev_recording:
+                    self.btn_start_stop.setIcon(QIcon(os.path.join(ICON_PATH, "round_stop_black_48dp.png")))
+                    self.btn_start_stop.setText("Stop")
+                    prev_recording = True
+                elif not self.logger.cache["recording"] and prev_recording: 
+                    self.btn_start_stop.setIcon(QIcon(os.path.join(ICON_PATH, "round_play_arrow_black_48dp.png")))
+                    self.btn_start_stop.setText("Start")
+                    prev_recording = False
+                sleep(0.2)
+        threading.Thread(target=watchRecordingStatus, daemon=True).start()
     
     def initUI(self):
         vbox = QVBoxLayout()
         self.setWindowTitle("recKeyMouse")
         self.setMaximumWidth(300)
         self.lbl_logpath = QLabel()
-        self.btn_start = QPushButton("Start")
-        self.btn_stop = QPushButton("Stop")
+        self.btn_start_stop = QPushButton("Start")
+        self.btn_start_stop.setIcon(QIcon(os.path.join(ICON_PATH, "round_play_arrow_black_48dp.png")))
         self.btn_run = QPushButton("Run (x{})".format(getConf("replay_times")))
         self.console = QTextEdit()
         self.console.setReadOnly(True)
@@ -39,8 +54,7 @@ class RecorderWindow(QMainWindow):
         self.console.setFont(QFont('Courier', 10))
 
         vbox.addWidget(self.lbl_logpath)
-        vbox.addWidget(self.btn_start)
-        vbox.addWidget(self.btn_stop)
+        vbox.addWidget(self.btn_start_stop)
         vbox.addWidget(self.btn_run)
         vbox.addWidget(self.console)
         
@@ -51,10 +65,15 @@ class RecorderWindow(QMainWindow):
         self.lbl_logpath.setWordWrap(True)
         self.lbl_logpath.setText(f"log file: {self.logger.record_file}")
 
-        self.btn_start.pressed.connect(self.startRecording)
-        self.btn_stop.pressed.connect(self.stopRecording)
+        self.btn_start_stop.pressed.connect(self.startStopRecording)
         self.btn_run.pressed.connect(self.exectueRecord)
         self.show()
+    
+    def startStopRecording(self):
+        if self.logger.cache["recording"]:
+            self.stopRecording()
+        else:
+            self.startRecording()
     
     def startRecording(self):
         # self.showNormal()

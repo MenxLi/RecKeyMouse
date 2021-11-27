@@ -1,6 +1,7 @@
 import os, json
 curr_path = os.path.dirname(__file__)
 CONF_PATH = os.path.join(curr_path, "conf.json")
+ICON_PATH = os.path.join(curr_path, "icons")
 
 def getConf(keyword):
     curr_path = os.path.dirname(__file__)
