@@ -1,12 +1,16 @@
+import threading
 from typing import List, Tuple, Union
 import typing
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QAbstractItemView, QFrame, QHBoxLayout, QHeaderView, QLabel, QLineEdit, QPushButton, QShortcut, QTableView, QVBoxLayout, QWidget
 
+from recKeyMouse.executer import Executer, KeyboardExecuter, MouseExecuter
+
 from .logger import ActionLogger, Logline
 from .utils import deleteDuplicate
+from .widget import WidgetBase
 
-class EventEditor(QWidget):
+class EventEditor(WidgetBase):
     def __init__(self, parent = None) -> None:
         super().__init__(parent=parent)
         self.initUI()
@@ -41,7 +45,7 @@ class EventEditor(QWidget):
         self.logger.writeLog(record)
         self.close()
 
-class EventViewer(QWidget):
+class EventViewer(WidgetBase):
     def __init__(self, event_name = "event") -> None:
         super().__init__()
         self.event_name = event_name
@@ -56,16 +60,23 @@ class EventViewer(QWidget):
         hhbox = QHBoxLayout()
         label = QLabel(self.event_name)
         self.event_view = EventTableView()
-        self.btn_delete = QPushButton("Delete")
+        self.btn_play = QPushButton("Play")
         self.btn_edit = QPushButton("Edit")
+        self.btn_duplicate = QPushButton("Duplicate")
+        self.btn_delete = QPushButton("Delete")
 
+        self.event_view.doubleClicked.connect(self.openEditor)
         self.btn_delete.clicked.connect(self.deleteCurrentSelected)
         self.btn_edit.clicked.connect(self.openEditor)
+        self.btn_duplicate.clicked.connect(self.duplicateSelected)
+        self.btn_play.clicked.connect(self.playSelected)
 
         vbox.addWidget(label)
         vbox.addWidget(self.event_view)
         vbox.addLayout(hhbox)
+        hhbox.addWidget(self.btn_play)
         hhbox.addWidget(self.btn_edit)
+        hhbox.addWidget(self.btn_duplicate)
         hhbox.addWidget(self.btn_delete)
 
         frame.setLayout(vbox)
@@ -77,6 +88,7 @@ class EventViewer(QWidget):
 
     def loadEvents(self, event_data: List[Logline]):
         self.model = EventTableModel(event_data)
+        self.model.data.sort(key=lambda x: x["time"])
         self.event_view.setModel(self.model)
         self.event_view.initSettings()
     
@@ -86,11 +98,11 @@ class EventViewer(QWidget):
             return
         for index in indexes:
             def callback(data: Logline):
-                if True: # To be changed later
-                    time_0 = float(self.model.data[index]["time"])
-                    time_1 = float(data["time"])
-                    for i in range(len(self.model.data)):
-                        if time_1>time_0:
+                time_0 = float(self.model.data[index]["time"])
+                time_1 = float(data["time"])
+                if time_1 != time_0:
+                    if self.queryDialog("The time has changed for this entry, change all subsequent time accordingly?"): 
+                        for i in range(len(self.model.data)):
                             if float(self.model.data[i]["time"])>time_0:
                                 self.model.data[i]["time"] += time_1-time_0
 
@@ -98,6 +110,22 @@ class EventViewer(QWidget):
                 self.model.data.sort(key=lambda x: x["time"])
                 return None
             self.editor = SingleEventEditor(self.model.data[index], callback)
+    
+    def playSelected(self):
+        indexes = self.getCurrentSelectIdx()
+        if indexes is None:
+            return
+        executer = Executer(None)
+        executer.run(events=[self.model.data[i] for i in indexes])
+    
+    def duplicateSelected(self):
+        indexes = self.getCurrentSelectIdx()
+        if indexes is None:
+            return
+        self.model.data += [self.model.data[i] for i in indexes]
+        self.model.data.sort(key=lambda x: x["time"])
+        self.model.layoutChanged.emit()
+        return
     
     def deleteCurrentSelected(self):
         indexes = self.getCurrentSelectIdx()
