@@ -5,6 +5,7 @@ from PyQt5.QtGui import QCursor, QFont, QIcon
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QMainWindow, QPushButton, QWidget
 
 from recKeyMouse.executer import Executer
+from recKeyMouse.version import VERSION
 from .logger import ActionLogger
 from .confReader import getConf, ICON_PATH
 import json, os, sys
@@ -26,6 +27,7 @@ class RecorderWindow(QMainWindow):
         self.__thread_stopRecording = None
         self.__thread_executeRecord = None
  
+        print("RecKeyMouse - v{}".format(VERSION))
         print("Author: Li, Mengxun - mengxunli@whu.edu.cn")
         print("For more info, see: https://github.com/MenxLi/RecKeyMouse")
 
@@ -96,7 +98,7 @@ class RecorderWindow(QMainWindow):
                 return
         def _stopRecording():
             record = self.logger.stop()
-            record["mouse_events"].pop()    # Delete last key press
+            record["events"].pop(-2)    # Delete last mouse key press
             self.logger.writeLog(record)
         self.__thread_stopRecording = threading.Thread(target=_stopRecording)
         self.__thread_stopRecording.start()

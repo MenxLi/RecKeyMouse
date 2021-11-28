@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QApplication
 import sys, argparse, time
+
+from recKeyMouse.version import VERSION
 from .recorder import RecorderWindow
 from .logger import ActionLogger
 from .executer import Executer
@@ -36,7 +38,7 @@ def main():
     )
     parser.add_argument(
         "-e", "--edit", action="store_true", default=False, 
-        help = "Edit events. (Underdevelopment, viewing is supported)"
+        help = "Edit events."
     )
     parser.add_argument(
         "--configure", action="store_true", default=False, 
@@ -45,6 +47,10 @@ def main():
     parser.add_argument(
         "--init_configure", action="store_true", default=False, 
         help = "Generate default configuration file."
+    )
+    parser.add_argument(
+        "--version", action="store_true", default=False, 
+        help = "Show version."
     )
 
     args = parser.parse_args()
@@ -55,6 +61,10 @@ def main():
     
     if args.configure:
         openFile(CONF_PATH)
+        return
+    
+    if args.version:
+        print(VERSION)
         return
 
     if args.record:

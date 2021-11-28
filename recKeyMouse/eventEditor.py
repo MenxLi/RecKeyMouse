@@ -17,14 +17,13 @@ class EventEditor(WidgetBase):
 
     def initUI(self):
         self.resize(500, 500)
+        self.setWindowTitle("Event editor.")
         vbox = QVBoxLayout()
-        self.mouse_viewer = EventViewer("Mouse events")
-        self.keyboard_viewer = EventViewer("Keyboard events")
+        self.viewer = EventViewer("Mouse events")
         self.btn_ok = QPushButton("OK")
 
         self.btn_ok.clicked.connect(self.accept)
-        vbox.addWidget(self.mouse_viewer)
-        vbox.addWidget(self.keyboard_viewer)
+        vbox.addWidget(self.viewer)
         vbox.addWidget(self.btn_ok)
         self.setLayout(vbox)
         self.show()
@@ -32,15 +31,13 @@ class EventEditor(WidgetBase):
     def loadEventFile(self, f_path: str):
         self.logger = ActionLogger(f_path)
         self.logger.loadLog()
-        self.mouse_viewer.loadEvents(self.logger.mouse_events)
-        self.keyboard_viewer.loadEvents(self.logger.keyboard_events)
+        self.viewer.loadEvents(self.logger.events)
     
     def accept(self):
-        mouse_events = self.mouse_viewer.model.data
-        keyboard_events = self.keyboard_viewer.model.data
-        record = {
-            "mouse_events": mouse_events,
-            "keyboard_events": keyboard_events
+        events = self.viewer.model.data
+        record =  {
+            "start_time_str": self.logger.start_time_str,
+            "events": events
         }
         self.logger.writeLog(record)
         self.close()

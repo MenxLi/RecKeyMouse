@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+from recKeyMouse.version import VERSION
 
 setup(
     name="KeyMouseRecorder",
-    version="0.1.3",
+    version=VERSION,
     author="Mengxun Li",
     author_email="mengxunli@whu.edu.cn",
     description="A screen action recorder",

@@ -3,14 +3,16 @@ A screen recorder (based on [pynput](https://pypi.org/project/pynput/)), record 
 
 ## Installation
 ```bash
+pip install -r reqirements.txt
 python setup.py install
 ```
 
 ## Usage
 ```bash
 recordKM            # Open GUI
-recordKM -r         # Record (no GUI)
-recordKM -p         # Replay (no GUI)
+recordKM -e         # Open event editor GUI
+recordKM -r         # Start recording (no GUI)
+recordKM -p         # Start replaying (no GUI)
 recordKM --help     # For help
 ```
 
@@ -29,24 +31,28 @@ optional arguments:
   -e, --edit            Edit events.
   --configure           Open configuration json file.
   --init_configure      Generate default configuration file.
+  --version             Show version.
 ```
 
 ## API
 ```python
 from recKeyMouse import ActionLogger, Executer, startGUI
 
-recording_file = "<recording file path>" 
+recording_file = "recording/file/path" 
 
 # Recording
 logger = ActionLogger(recording_file)
-logger.start()    # Press logger.STOP_KEY to stop recording
+logger.start()    # Press ActionLogger.STOP_KEY to stop recording
 
 # Execute
 executer = Executer(recording_file)
-executer.run()
+executer.run()    # Press ActionLogger.STOP_KEY to stop replaying
 
 # Start GUI
-startGUI()
+startGUI(recording_file)
+
+# Start editor GUI
+startEditorGUI(recording_file)
 ```
 
 ## Settings
@@ -54,5 +60,5 @@ The configuration file is at `<package_path>/recKeyMouse/conf.json`
 Run `recordKM --configure` to edit with default json editor.
 
 ## Future directions
-- [ ] Event editor
+- [x] Event editor
 - [ ] Configuration editor

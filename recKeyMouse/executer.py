@@ -1,6 +1,8 @@
 import time, threading
 from typing import List, Union
 
+from pynput import keyboard
+
 from recKeyMouse.confReader import getConf
 from .logger import ActionLogger, Logline
 import pickle
@@ -55,41 +57,57 @@ class Executer():
         self.m_executer = MouseExecuter()
         self.k_executer = KeyboardExecuter()
         self.v_executer = VirtualExecuter()
+        self.executers = {
+            "Mouse": self.m_executer,
+            "Keyboard": self.k_executer,
+            "Virtual": self.v_executer
+        }
+        self.k_listener =  keyboard.Listener(on_release = self.stopOnRelease)
+        self.__allow_run = True
     
     def setFile(self, file: str) -> None:
         self.logger = ActionLogger(file)
         self.logger.loadLog()
     
+    def stopOnRelease(self, key):
+        if key == ActionLogger.STOP_KEY:
+            self.__allow_run = False
+    
     def run(self, replay_times = 1, events: Union[List[Logline], None] = None): 
-        if events:
-            m_events = [e for e in events if e["device"] == "Mouse"]
-            k_events = [e for e in events if e["device"] == "Keyboard"]
-        elif hasattr(self, "logger"):
-            m_events = self.logger.mouse_events
-            k_events = self.logger.keyboard_events
-        else:
-            raise Exception("Failed to run because events not set, use Executer.setFile or run(events) to set events.")
+        if events is None:
+            if hasattr(self, "logger"):
+                events = self.logger.events
+            else:
+                raise Exception("Failed to run because events not set, use Executer.setFile or run(events) to set events.")
+        print("+++++++++++++++++++++++++++++++++")
+        print("Start replaying...")
+        print("Press {} to stop replay.".format(ActionLogger.STOP_KEY))
         for i in range(replay_times):
             print("=================================")
             print("replaying... time {}/{}:".format(i+1, replay_times))
-            m_thread = threading.Thread(target=self._runEventsThread, args = [self.m_executer, m_events])
-            k_thread = threading.Thread(target=self._runEventsThread, args = [self.k_executer, k_events])
-            m_thread.start()
-            k_thread.start()
-            m_thread.join()
-            k_thread.join()
+            thread = threading.Thread(target=self._runEventsThread, args = [events])
+            thread.start()
+            self.k_listener.start()
+            thread.join()
             if replay_times > 1:
                 time.sleep(getConf("rest_between_replay"))
         print("Finished replay.")
     
-    def _runEventsThread(self, executer: DeviceExecuter, events: List[Logline]):
+    def _runEventsThread(self, events: List[Logline]):
         prev_time = 0
         for e in events:
+            if not self.__allow_run:
+                self.k_listener.stop()
+                self.k_listener.join()
+                print("**Terminated**")
+                break
             print(e)
             exec_time = e["time"]
             time.sleep(exec_time - prev_time)
             prev_time = exec_time
+            executer: DeviceExecuter = self.executers[e["device"]]
             executer.runMethod(e["method"], *e["args"], **e["kwargs"])
+        self.__allow_run = True
 
 
             

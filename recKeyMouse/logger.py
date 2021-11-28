@@ -1,5 +1,5 @@
 from io import TextIOWrapper
-from time import time, sleep
+from time import ctime, time, sleep
 import pickle, threading, os
 
 import pynput
@@ -96,16 +96,6 @@ class ParseLog():
     """
     @staticmethod
     def generateLogLine(time: float, device: str, method: str, args: list = [], kwargs: dict = {}) -> Logline:
-        # params_str_list = []
-        # for k, v in params.items():
-            # params_str_list.append("{}|{}".format(k, v))
-        # time_str = "time:{}".format(time)
-        # device_str = "device:{}".format(device)   # Mouse / Keyboard
-        # method_str = "method:{}".format(method)
-        # params_str = "params:{}".format(",".join(params_str_list))
-
-        # log_str = ";".join([time_str, device_str, method_str, params_str])
-        # return log_str
         log_dict = {
             "time": time,
             "device": device,
@@ -115,10 +105,6 @@ class ParseLog():
         }
         return Logline(log_dict)
 
-    @staticmethod
-    def readLogLine(log: str) -> dict:
-        pass
-
 class ActionLogger():
     MOUSE_MOVE_TIME_INTERVAL = 0.05
     MOUSE_MOVE_DISTANCE_SQUARED = 2500
@@ -127,8 +113,9 @@ class ActionLogger():
         if os.path.isdir(log_file):
             log_file = os.path.join(log_file, "record.pkl")
         self.record_file = os.path.abspath(log_file)
-        self.mouse_events = []
-        self.keyboard_events = []
+        # self.mouse_events = []
+        # self.keyboard_events = []
+        self.events = []
         self.log_mouse_motion = log_mouse_motion
         self.cache = {
             "thread_started": False,
@@ -156,7 +143,7 @@ class ActionLogger():
         self.cache["mouse_move_logtime"] = _time
         self.cache["mouse_prev_pos"] = (x, y)
         log_dict = ParseLog.generateLogLine(_time, "Mouse", "setPos", [x,y], kwargs={})
-        self.mouse_events.append(log_dict)
+        self.events.append(log_dict)
 
     def onMouseClick(self, x, y, button, pressed):
         if not self.cache["recording"]: return
@@ -168,13 +155,13 @@ class ActionLogger():
             _time = time() - self.start_time
             log_dict = ParseLog.generateLogLine(_time, "Mouse", "release", [x,y,button], kwargs={})
             self.cache["mouse_pressed"] = False
-        self.mouse_events.append(log_dict)
+        self.events.append(log_dict)
     
     def onMouseScroll(self, x, y, dx, dy):
         if not self.cache["recording"]: return
         _time = time() - self.start_time
         log_dict = ParseLog.generateLogLine(_time, "Mouse", "scroll", [x,y,dx, dy], kwargs={})
-        self.mouse_events.append(log_dict)
+        self.events.append(log_dict)
     
     def onKeyboardPress(self, key):
         if not self.cache["recording"]: return
@@ -183,24 +170,24 @@ class ActionLogger():
             self.stopAndLog()
             return
         log_dict = ParseLog.generateLogLine(_time, "Keyboard", "press", [key], kwargs={})
-        self.keyboard_events.append(log_dict)
+        self.events.append(log_dict)
 
     def onKeyboardRelease(self, key):
         if not self.cache["recording"]: return
         _time = time() - self.start_time
         log_dict = ParseLog.generateLogLine(_time, "Keyboard", "release", [key], kwargs={})
-        self.keyboard_events.append(log_dict)
+        self.events.append(log_dict)
 
     def start(self):
         for i in list(range(int(getConf("record_after"))))[::-1]:
             print(i+1)
             sleep(1)
-        self.mouse_events = []
-        self.keyboard_events = []
+        self.events = []
         self.start_time = time()
+        self.start_time_str = ctime(self.start_time)
         # start event
-        log_dict = ParseLog.generateLogLine(0, "Keyboard", "hold")
-        self.keyboard_events.append(log_dict)
+        log_dict = ParseLog.generateLogLine(0, "Virtual", "hold")
+        self.events.append(log_dict)
 
         self.mouse_listener = pynput.mouse.Listener(
             on_move = self.onMouseMove,
@@ -241,11 +228,11 @@ class ActionLogger():
         # self.keyboard_listener.stop()       # Will somehow lead to bug (in Ubuntu?)
         _time = time() - self.start_time
         # Finish event
-        log_dict = ParseLog.generateLogLine(_time, "Keyboard", "hold")
-        self.keyboard_events.append(log_dict)
+        log_dict = ParseLog.generateLogLine(_time, "Virtual", "hold")
+        self.events.append(log_dict)
         record =  {
-            "mouse_events": self.mouse_events,
-            "keyboard_events": self.keyboard_events
+            "start_time_str": self.start_time_str,
+            "events": self.events
         }
         return record
     
