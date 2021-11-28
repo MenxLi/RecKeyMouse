@@ -16,8 +16,12 @@ class EventEditor(QWidget):
         vbox = QVBoxLayout()
         self.mouse_viewer = EventViewer("Mouse events")
         self.keyboard_viewer = EventViewer("Keyboard events")
+        self.btn_ok = QPushButton("OK")
+
+        self.btn_ok.clicked.connect(self.accept)
         vbox.addWidget(self.mouse_viewer)
         vbox.addWidget(self.keyboard_viewer)
+        vbox.addWidget(self.btn_ok)
         self.setLayout(vbox)
         self.show()
 
@@ -26,6 +30,16 @@ class EventEditor(QWidget):
         self.logger.loadLog()
         self.mouse_viewer.loadEvents(self.logger.mouse_events)
         self.keyboard_viewer.loadEvents(self.logger.keyboard_events)
+    
+    def accept(self):
+        mouse_events = self.mouse_viewer.model.data
+        keyboard_events = self.keyboard_viewer.model.data
+        record = {
+            "mouse_events": mouse_events,
+            "keyboard_events": keyboard_events
+        }
+        self.logger.writeLog(record)
+        self.close()
 
 class EventViewer(QWidget):
     def __init__(self, event_name = "event") -> None:
@@ -72,6 +86,14 @@ class EventViewer(QWidget):
             return
         for index in indexes:
             def callback(data: Logline):
+                if True: # To be changed later
+                    time_0 = float(self.model.data[index]["time"])
+                    time_1 = float(data["time"])
+                    for i in range(len(self.model.data)):
+                        if time_1>time_0:
+                            if float(self.model.data[i]["time"])>time_0:
+                                self.model.data[i]["time"] += time_1-time_0
+
                 self.model.data[index] = data
                 self.model.data.sort(key=lambda x: x["time"])
                 return None
