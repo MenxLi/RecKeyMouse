@@ -19,7 +19,7 @@ class EventEditor(WidgetBase):
         self.resize(500, 500)
         self.setWindowTitle("Event editor.")
         vbox = QVBoxLayout()
-        self.viewer = EventViewer("Mouse events")
+        self.viewer = EventViewer("Events")
         self.btn_ok = QPushButton("OK")
 
         self.btn_ok.clicked.connect(self.accept)
@@ -88,6 +88,13 @@ class EventViewer(WidgetBase):
         self.model.data.sort(key=lambda x: x["time"])
         self.event_view.setModel(self.model)
         self.event_view.initSettings()
+    
+    def addEvent(self):
+        indexes = self.getCurrentSelectIdx()
+        if indexes is None:
+            return
+        index = indexes[0]
+        pass
     
     def openEditor(self):
         indexes = self.getCurrentSelectIdx()

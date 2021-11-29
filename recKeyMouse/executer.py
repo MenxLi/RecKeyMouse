@@ -1,5 +1,5 @@
 import time, threading
-from typing import List, Union
+from typing import Callable, List, Union
 
 from pynput import keyboard
 
@@ -19,7 +19,18 @@ class DeviceExecuter():
         self.__getattribute__(method)(*args, **kwargs)
 
 class VirtualExecuter(DeviceExecuter):
-    pass
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.__callback_dict = {
+            "default": lambda : None,
+        }
+
+    def setCallback(self, flag: str, func: Callable):
+        self.__callback_dict[flag] = func
+
+    def callback(self, flag = "default"):
+        self.__callback_dict[flag]()
 
 class MouseExecuter(DeviceExecuter):
     def __init__(self) -> None:
@@ -39,6 +50,11 @@ class MouseExecuter(DeviceExecuter):
     def scroll(self, x, y, dx, dy):
         self.setPos(x, y)
         self.mouse.scroll(dx, dy)
+    
+    def click(self, x, y, button):
+        self.setPos(x, y)
+        self.mouse.press(button)
+        self.mouse.release(button)
 
 class KeyboardExecuter(DeviceExecuter):
     def __init__(self) -> None:
@@ -49,6 +65,13 @@ class KeyboardExecuter(DeviceExecuter):
 
     def release(self, key):
         self.keyboard.release(key)
+
+    def click(self, key):
+        self.press(key)
+        self.release(key)
+    
+    def input(self, string: str):
+        self.keyboard.type(string)
 
 class Executer():
     def __init__(self, file: Union[str, None] = None) -> None:

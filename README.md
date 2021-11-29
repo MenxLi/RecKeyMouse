@@ -36,7 +36,7 @@ optional arguments:
 
 ## API
 ```python
-from recKeyMouse import ActionLogger, Executer, startGUI
+from recKeyMouse import ActionLogger, Executer, startGUI, startEditorGUI
 
 recording_file = "recording/file/path" 
 

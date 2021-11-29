@@ -40,7 +40,7 @@ class LoglineUtils():
             return getattr(keyboard.Key, arg)
         if arg.startswith("'"):
             # General Key
-            return arg
+            return arg.strip("'")
         if arg.isalpha():
             return str(arg)
         if "." in arg:
