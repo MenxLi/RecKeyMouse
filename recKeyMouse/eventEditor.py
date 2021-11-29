@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QAbstractItemView, QFrame, QHBoxLayout, QHeaderView,
 
 from recKeyMouse.executer import Executer, KeyboardExecuter, MouseExecuter
 
-from .logger import ActionLogger, Logline
+from .logger import ActionLogger, Logline, generateLogLine
 from .utils import deleteDuplicate
 from .widget import WidgetBase
 
@@ -59,12 +59,14 @@ class EventViewer(WidgetBase):
         self.event_view = EventTableView()
         self.btn_play = QPushButton("Play")
         self.btn_edit = QPushButton("Edit")
+        self.btn_add = QPushButton("Add")
         self.btn_duplicate = QPushButton("Duplicate")
         self.btn_delete = QPushButton("Delete")
 
         self.event_view.doubleClicked.connect(self.openEditor)
         self.btn_delete.clicked.connect(self.deleteCurrentSelected)
         self.btn_edit.clicked.connect(self.openEditor)
+        self.btn_add.clicked.connect(self.addEvent)
         self.btn_duplicate.clicked.connect(self.duplicateSelected)
         self.btn_play.clicked.connect(self.playSelected)
 
@@ -73,6 +75,7 @@ class EventViewer(WidgetBase):
         vbox.addLayout(hhbox)
         hhbox.addWidget(self.btn_play)
         hhbox.addWidget(self.btn_edit)
+        hhbox.addWidget(self.btn_add)
         hhbox.addWidget(self.btn_duplicate)
         hhbox.addWidget(self.btn_delete)
 
@@ -80,8 +83,8 @@ class EventViewer(WidgetBase):
         self.setLayout(main_layout)
 
         ## not working?
-        # self.shortcut_delete_selections = QShortcut(QtGui.QKeySequence("Del"), self)
-        # self.shortcut_delete_selections.activated.connect(self.deleteCurrentSelected)
+        self.shortcut_delete_selections = QShortcut(QtGui.QKeySequence("Del"), self)
+        self.shortcut_delete_selections.activated.connect(self.deleteCurrentSelected)
 
     def loadEvents(self, event_data: List[Logline]):
         self.model = EventTableModel(event_data)
@@ -94,7 +97,16 @@ class EventViewer(WidgetBase):
         if indexes is None:
             return
         index = indexes[0]
-        pass
+        logline = generateLogLine(
+            time = self.model.data[index]["time"],
+            device="Virtual",
+            method="callback",
+            args=["default"],
+            kwargs={}
+        )
+        self.model.data.insert(index, logline)
+        self.event_view.selectRow(index)
+        self.openEditor()
     
     def openEditor(self):
         indexes = self.getCurrentSelectIdx()
