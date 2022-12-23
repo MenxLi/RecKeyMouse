@@ -28,7 +28,7 @@ setup(
     exclude_package_data={'': ["conf.json"]},
     include_package_data = True,
 
-    install_requires = ["pynput", "PyQt5"],
+    install_requires = ["pynput", "PyQt6"],
 
     entry_points = {
         "console_scripts":[

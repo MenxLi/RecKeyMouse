@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 import sys, argparse, time
 
 from recKeyMouse.version import VERSION
@@ -12,13 +12,13 @@ from .utils import openFile
 def startGUI(saving_path: str = None):
     app = QApplication(sys.argv)
     gui = RecorderWindow(saving_path = saving_path)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 def startEditorGUI(saving_path: str = None):
     app = QApplication(sys.argv)
     editor = EventEditor()
     editor.loadEventFile(saving_path)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 def main():
     parser = argparse.ArgumentParser(

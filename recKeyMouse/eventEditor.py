@@ -1,8 +1,9 @@
 import threading
 from typing import List, Tuple, Union
 import typing
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QAbstractItemView, QFrame, QHBoxLayout, QHeaderView, QLabel, QLineEdit, QPushButton, QShortcut, QTableView, QVBoxLayout, QWidget
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtGui import QShortcut
+from PyQt6.QtWidgets import QAbstractItemView, QFrame, QHBoxLayout, QHeaderView, QLabel, QLineEdit, QPushButton, QTableView, QVBoxLayout, QWidget
 
 from recKeyMouse.executer import Executer, KeyboardExecuter, MouseExecuter
 
@@ -174,7 +175,7 @@ class EventTableModel(QtCore.QAbstractTableModel):
         self.data: List[Logline] = event_data
 
     def data(self, index: QtCore.QModelIndex, role):
-        if role == QtCore.Qt.DisplayRole:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
             return self.data[index.row()].getStrItemByIndex(index.column())
     
     def rowCount(self, parent: QtCore.QModelIndex = ...) -> int:
@@ -184,22 +185,22 @@ class EventTableModel(QtCore.QAbstractTableModel):
         return len(Logline.INDEX_FUNC)
     
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...):
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            if orientation == QtCore.Qt.Orientation.Horizontal:
                 return str(Logline.INDEX_FUNC[section][0])
 
-            if orientation == QtCore.Qt.Vertical:
+            if orientation == QtCore.Qt.Orientation.Vertical:
                 return str(section)
 
 class EventTableView(QTableView):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
     def initSettings(self):
         for i in range(len(Logline.INDEX_FUNC)):
             self.header = self.horizontalHeader()
-            self.header.setSectionResizeMode(i, QHeaderView.Stretch)
+            self.header.setSectionResizeMode(i, QHeaderView.ResizeMode.Stretch)
 
 class SingleEventEditor(QWidget):
     def __init__(self, data: Logline, accept_callback: typing.Callable) -> None:

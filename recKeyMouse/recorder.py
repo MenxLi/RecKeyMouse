@@ -1,8 +1,8 @@
 import threading, multiprocessing
 from time import time, sleep
-from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtGui import QCursor, QFont, QIcon
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QMainWindow, QPushButton, QWidget
+from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtGui import QCursor, QFont, QIcon
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QTextEdit, QVBoxLayout, QMainWindow, QPushButton, QWidget
 
 from recKeyMouse.executer import Executer
 from recKeyMouse.version import VERSION
