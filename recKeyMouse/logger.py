@@ -1,12 +1,7 @@
-from io import TextIOWrapper
 from time import ctime, time, sleep
 import pickle, threading, os
 
 import pynput
-from pynput import mouse
-from pynput import keyboard
-from pynput.mouse import Controller as M_Controller
-from pynput.mouse import Button as M_Button
 from .confReader import getConf
 
 from .logUtils import Logline, generateLogLine

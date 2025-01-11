@@ -24,11 +24,10 @@ setup(
     python_requires=">=3.5",
 
     packages=find_packages(),
-    # package_data={'': ["conf.json"]},
     exclude_package_data={'': ["conf.json"]},
     include_package_data = True,
 
-    install_requires = ["pynput", "PyQt6"],
+    install_requires = ["pynput", "PyQt6", "platformdirs"],
 
     entry_points = {
         "console_scripts":[

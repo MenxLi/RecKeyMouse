@@ -56,7 +56,6 @@ startEditorGUI(recording_file)
 ```
 
 ## Settings
-The configuration file is at `<package_path>/recKeyMouse/conf.json`  
 Run `recordKM --configure` to edit with default json editor.
 
 ## Future directions
