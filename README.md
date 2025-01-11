@@ -3,8 +3,7 @@ A screen recorder (based on [pynput](https://pypi.org/project/pynput/)), record 
 
 ## Installation
 ```bash
-pip install -r reqirements.txt
-python setup.py install
+pip install .
 ```
 
 ## Usage
