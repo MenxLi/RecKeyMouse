@@ -9,11 +9,11 @@ python setup.py install
 
 ## Usage
 ```bash
-recordKM            # Open GUI
-recordKM -e         # Open event editor GUI
-recordKM -r         # Start recording (no GUI)
-recordKM -p         # Start replaying (no GUI)
-recordKM --help     # For help
+reckm             # Open GUI
+reckm -e          # Open event editor GUI
+reckm -r          # Start recording (no GUI)
+reckm -p          # Start replaying (no GUI)
+reckm --help      # For help
 ```
 
 **help**:
@@ -36,7 +36,7 @@ optional arguments:
 
 ## API
 ```python
-from recKeyMouse import ActionLogger, Executer, startGUI, startEditorGUI
+from recKeyMouse.api import ActionLogger, Executer, startGUI, startEditorGUI
 
 recording_file = "recording/file/path" 
 
