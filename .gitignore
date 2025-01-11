@@ -7,7 +7,6 @@
 dist
 build
 *.pkl
-recKeyMouse/conf.json
 
 *_tmp.*
 *.TempDir

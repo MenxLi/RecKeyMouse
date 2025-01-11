@@ -2,8 +2,12 @@ import os, json, platformdirs
 from .version import VERSION
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "icons")
-DATA_DIR = platformdirs.user_data_dir("reckm", appauthor="li_mengxun", ensure_exists=True, version=VERSION)
-CONF_PATH = os.path.join(DATA_DIR, "conf.json")
+if os.environ.get("RECKM_DATA", None) is not None:
+    DATA_DIR = os.environ.get("RECKM_DATA")
+    if not os.path.exists(DATA_DIR): os.mkdir(DATA_DIR)
+else:
+    DATA_DIR = platformdirs.user_data_dir("reckm", appauthor="li_mengxun", ensure_exists=True, version=VERSION)
+CONF_PATH = os.path.join(DATA_DIR, "rkm_conf.json")
 
 def getConf(keyword):
     if not os.path.exists(CONF_PATH):
