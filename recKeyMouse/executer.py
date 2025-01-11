@@ -5,10 +5,7 @@ from pynput import keyboard
 
 from recKeyMouse.confReader import getConf
 from .logger import ActionLogger, Logline
-import pickle
-import pynput
 from pynput.mouse import Controller as M_Controller
-from pynput.mouse import Button as M_Button
 from pynput.keyboard import Controller as K_Controller
 
 class DeviceExecuter():
@@ -85,18 +82,23 @@ class Executer():
             "Keyboard": self.k_executer,
             "Virtual": self.v_executer
         }
-        self.k_listener =  keyboard.Listener(on_release = self.stopOnRelease)
-        self.__allow_run = True
+        self.k_listener =  keyboard.Listener(on_press = self._stopOnPress)
+        self._is_killed = False
     
     def setFile(self, file: str) -> None:
         self.logger = ActionLogger(file)
         self.logger.loadLog()
     
-    def stopOnRelease(self, key):
+    def _stopOnPress(self, key):
         if key == ActionLogger.STOP_KEY:
-            self.__allow_run = False
+            self._is_killed = True
     
     def run(self, replay_times = 1, events: Union[List[Logline], None] = None): 
+        """
+        Run the events, return if running is successful. 
+        Return True if not killed, False otherwise.
+        """
+        self._is_killed = False
         if events is None:
             if hasattr(self, "logger"):
                 events = self.logger.events
@@ -115,11 +117,12 @@ class Executer():
             if replay_times > 1:
                 time.sleep(getConf("rest_between_replay"))
         print("Finished replay.")
+        return not self._is_killed
     
     def _runEventsThread(self, events: List[Logline]):
         prev_time = 0
         for e in events:
-            if not self.__allow_run:
+            if self._is_killed:
                 self.k_listener.stop()
                 self.k_listener.join()
                 print("**Terminated**")
@@ -130,8 +133,4 @@ class Executer():
             prev_time = exec_time
             executer: DeviceExecuter = self.executers[e["device"]]
             executer.runMethod(e["method"], *e["args"], **e["kwargs"])
-        self.__allow_run = True
-
-
-            
     
